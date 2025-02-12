@@ -140,16 +140,16 @@ sub simplex_to_string {
 }
 
 
-my $id2edges = load("regular_unimodular.representative_graphs");
-my $cl2ids = load("regular_unimodular.cl2ids");
-my $classes_histogram = load("regular_unimodular.classes_histogram");
-my $id2triang = load("regular_unimodular.representative_triangulations");
+my $id2edges = load("data/regular_unimodular.representative_graphs");
+my $cl2ids = load("data/regular_unimodular.cl2ids");
+my $classes_histogram = load("data/regular_unimodular.classes_histogram");
+my $id2triang = load("data/regular_unimodular.representative_triangulations");
 
 my $sum = 0;
 my $counter = 0;
-my $OUT = FileHandle->new("> inner.tex");
+my $OUT = FileHandle->new("> latex/inner.tex");
 my ($mink,$minid, $maxk,$maxid) = (100000000,0,0,0);
-if(!-d "graphs"){ `mkdir graphs`; }
+if(!-d "latex/graphs"){ `mkdir latex/graphs`; }
 foreach my $cl (keys %$cl2ids){
    my $nids = $cl2ids->{$cl}->size();
    print "Running over cycle length $cl ($nids)\n";
@@ -168,7 +168,7 @@ foreach my $cl (keys %$cl2ids){
       my $edges = $id2edges->{$id};
       my $triang = $id2triang->{$id};
       $triang = join(", ", map(simplex_to_string($_), @$triang));
-      graph_to_tikz("graphs/$tikzfilename", $edges);
+      graph_to_tikz("latex/graphs/$tikzfilename", $edges);
       my $idstring = format_number($id);
       print $OUT "\\fbox{\n";
       print $OUT "\\begin{minipage}{.45\\textwidth}\n";
