@@ -55,12 +55,12 @@ sub graph_to_tikz {
       $ycoords{$directed_cycle[$i]} = cos(2*$i*pi/$cycle_size);
    }
    my $i = 0;
-   my $levelstep = 0.9;
    foreach my $node (@directed_cycle){
       my $done = new Set<Int>(@directed_cycle);
       my $neighbors = $g->ADJACENCY->adjacent_nodes($node) - $done;
       my @ordered_neighbors = @$neighbors;
       my $level = 2;
+      my $levelstep = 0.9;
       while (@ordered_neighbors > 0){
          my @new_ordered_neighbors = ();
          my $step = 1.0/(scalar @ordered_neighbors + 1.0);
