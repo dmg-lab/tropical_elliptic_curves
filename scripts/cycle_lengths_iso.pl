@@ -10,6 +10,24 @@ use IO::Uncompress::UnXz qw(unxz $UnXzError) ;
 use application 'polytope';
 my $codename="collect_graphs_";
 
+###############################################################################
+###############################################################################
+### cycle_lengths_iso.pl
+###
+### This script runs over the output of mptopcom or TOPCOM and produces the
+### graphs as described in ??. Furthermore it collects representatives of these
+### graphs up to graph isomorphism.
+###
+### Sample usage:
+### polymake --script cycle_lengths_iso.pl input.dat regular_unimodular.dat.xz
+### Run in parallel as follows:
+### ls -1 regular_unimodular.0*.dat.xz | parallel --eta -v --progress --bar\
+###    -n 1 -j5 polymake --script cycle_lengths_iso.pl input.dat {}
+###
+###############################################################################
+###############################################################################
+
+
 die "usage: $codename MPTOPCOM_INPUT MPTOPCOM_OUTPUT<n>\n" unless scalar(@ARGV)==2;
 
 # Set some file names, read original points to later make sure that the order
@@ -61,27 +79,9 @@ if($cayley_points->minor(All,~[5]) != $pts){
 }
 
 
-my $minkowski = minkowski_sum($P, $P);
-my $n_points = ($minkowski->LATTICE_POINTS)->rows();
-my $points = $minkowski->LATTICE_POINTS;
-my $ptsindices = new Map<Vector<Integer>, Int>();
-for(my $i=0; $i<$points->rows(); $i++){
-   $ptsindices->{$points->row($i)} = $i;
-}
-my @collected_graphs = ();
 
-my %histogram = ();
-my $classes = new Map<Int, GraphAdjacency>();
-my $nclasses = 0;
-
-#my $hash = new Array<Int>($size);
-
-# start the clock
-my $t0=Benchmark->new();
-
-my $rayset1 = new Set<Vector<Int>>;
-
-
+###############################################################################
+# Function for computing graph from a triangulation.
 sub tropical_curve_from_subdivision{
    my($pts, $mc, $index_map) = @_;
    my $toblerone_cells = new Set<Set<Integer>>;
@@ -91,6 +91,17 @@ sub tropical_curve_from_subdivision{
       my $set2 = new Set<Vector<Rational>>;
       foreach my $vertex (@{$pts->minor($cell, All)}){
          if ($vertex->[4] == 1){$set1 += $vertex} else {$set2 += $vertex};}   
+      # There are only three possible cases for the convex hulls of $set1 and
+      # $set2: a point, a line, or a triangle. In any case the elements of
+      # $set1 and $set2 are the vertices of a maximal cell, hence these will be
+      # vertices of the convex hulls as well. We only want those cases where
+      # the Minkowski sum of these convex hulls is a toblerone, i.e. a prism
+      # over a triangle. This happens for the case of a line and a triangle.
+      # Thus the sizes of $set1 and $set2 must be 2 and 3, or the other way
+      # around. Thus we can just test that the product of the sizes is 6, this
+      # already excludes all other cases. To see that this is sufficient,
+      # notice that $set1 and $set2 now form a disjoint subdivision of the
+      # vertices of a 4-dim simplex.
       if($set1->size()*$set2->size() == 6){
          my $sum_vert = new Set<Vector<Integer>>();
          foreach my $v1 (@$set1){
@@ -119,6 +130,28 @@ sub tropical_curve_from_subdivision{
    return $edges;
 }
 
+
+###############################################################################
+# Compute point set and compare it to mptopcom input points to make sure that
+# these are in the right order.
+my $minkowski = minkowski_sum($P, $P);
+my $n_points = ($minkowski->LATTICE_POINTS)->rows();
+my $points = $minkowski->LATTICE_POINTS;
+my $ptsindices = new Map<Vector<Integer>, Int>();
+for(my $i=0; $i<$points->rows(); $i++){
+   $ptsindices->{$points->row($i)} = $i;
+}
+my @collected_graphs = ();
+
+my %histogram = ();
+my $classes = new Map<Int, GraphAdjacency>();
+my $nclasses = 0;
+
+
+# start the clock
+my $t0=Benchmark->new();
+
+
 my $id=0;
 while(my $line=$TDATA->getline()) {
    chomp $line;
@@ -128,9 +161,8 @@ while(my $line=$TDATA->getline()) {
    my $edges = tropical_curve_from_subdivision($cayley_points, $T, $ptsindices);
    my $g = graph_from_edges($edges);
    my $cycle_length = 0;
-   foreach my $comp (@{$g->BICONNECTED_COMPONENTS}) {if ($comp->size>1) {$cycle_length = $comp->size; last;}}
+   foreach my $comp (@{$g->BICONNECTED_COMPONENTS}) {if ($comp->size>2) {$cycle_length = $comp->size; last;}}
    ++$histogram{$cycle_length};
-#$hash->[$id] = $cycle_length; #which is faster?
    my $ch = canonical_hash($g->ADJACENCY);
    print $OUT "ID :$id; edges: $edges; canonical_hash: $ch\n";
    if($id%10000 == 0){
@@ -140,13 +172,9 @@ while(my $line=$TDATA->getline()) {
    }
    if(defined $classes->{$ch}){
       my $test = graph::isomorphic($classes->{$ch}, $g->ADJACENCY) ? 1:0;
+      # Small test to make sure there are no hash collisions.
       if($test == 0){
          die "Collision!\n";
-# my @input = @{$classes->{$ch}};
-# push @input, $g->ADJACENCY;
-# my $newar = new Array<GraphAdjacency>(\@input);
-# $classes->{$ch} = $newar;
-# $nclasses++;
       }
    } else {
       $classes->{$ch} = $g->ADJACENCY;
