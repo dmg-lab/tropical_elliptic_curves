@@ -1,6 +1,7 @@
 use strict;
 use warnings;
 use Math::Trig;
+use Math::Complex;
 use FileHandle;
 
 
@@ -18,7 +19,7 @@ sub format_number {
 }
 
 sub graph_to_tikz {
-   my($fn, $edges) = @_;
+   my($fn, $edges, $rn, $bn) = @_;
    my $g = graph_from_edges($edges);
    my $TIKZ = FileHandle->new("> $fn");
    print $TIKZ "\\begin{tikzpicture}[scale=\\tikzscale]\n";
@@ -103,10 +104,12 @@ sub graph_to_tikz {
       my $y1 = $ycoords{$e->[1]};
       print $TIKZ "\\draw ($x0,$y0) -- ($x1,$y1);\n";
    }
+   my $circle_size = (2*sqrt(16.0))/sqrt($cycle_size)+(1.0*(16-$cycle_size)/16.0);
    foreach my $i (keys %xcoords){
       my $x = $xcoords{$i};
       my $y = $ycoords{$i};
-      print $TIKZ "\\fill ($x, $y) circle (3pt);\n";
+      my $color = $rn->contains($i) ? "red" : "blue";
+      print $TIKZ "\\fill[$color] ($x, $y) circle (".$circle_size."pt);\n";
    }
    
    print $TIKZ "\\end{tikzpicture}\n";
@@ -139,6 +142,85 @@ sub simplex_to_string {
    return $result;
 }
 
+###############################################################################
+# Function for computing graph from a triangulation.
+sub tropical_curve_from_subdivision{
+   my($pts, $mc, $index_map) = @_;
+   my $toblerone_cells = new Set<Set<Integer>>;
+   my $rednodes = new Set<Int>();
+   my $bluenodes = new Set<Int>();
+   my $redsimplices = new Set<Set<Int>>();
+   my $bluesimplices = new Set<Set<Int>>();
+
+   my $redtoblerones = new Set<Set<Int>>();
+
+   foreach my $cell (@{$mc}){
+      my $set1 = new Set<Vector<Rational>>;
+      my $set2 = new Set<Vector<Rational>>;
+      foreach my $vertex (@{$pts->minor($cell, All)}){
+         if ($vertex->[4] == 1){$set1 += $vertex} else {$set2 += $vertex};}
+      # There are only three possible cases for the convex hulls of $set1 and
+      # $set2: a point, a line, or a triangle. In any case the elements of
+      # $set1 and $set2 are the vertices of a maximal cell, hence these will be
+      # vertices of the convex hulls as well. We only want those cases where
+      # the Minkowski sum of these convex hulls is a toblerone, i.e. a prism
+      # over a triangle. This happens for the case of a line and a triangle.
+      # Thus the sizes of $set1 and $set2 must be 2 and 3, or the other way
+      # around. Thus we can just test that the product of the sizes is 6, this
+      # already excludes all other cases. To see that this is sufficient,
+      # notice that $set1 and $set2 now form a disjoint subdivision of the
+      # vertices of a 4-dim simplex.
+      if($set1->size()*$set2->size() == 6){
+         my $sum_vert = new Set<Vector<Integer>>();
+         foreach my $v1 (@$set1){
+            foreach my $v2 (@$set2){
+               my $s = $v1+$v2;
+               $s->[0] = 1;
+               $sum_vert += $s->slice(range(0,3));
+            }
+         }
+         my $cell_indices = new Set<Integer>;
+         foreach my $vertex (@{$sum_vert}){
+            $cell_indices += $index_map->{$vertex};
+         }
+         $toblerone_cells += $cell_indices;
+         if($set1->size() == 3){
+            $redtoblerones += $cell_indices;
+            $redsimplices += $cell;
+         } else {
+            $bluesimplices += $cell;
+         }
+      }
+   }
+
+   my $ordered_toblerones_cells = new Array<Set<Int>>($toblerone_cells);
+   my $edges = new Set<Array<Int>>;
+   for (my $i=0; $i<15; ++$i) {
+      for (my $j=$i+1; $j<16; ++$j) {
+         my $intersection = $ordered_toblerones_cells->[$i]*$ordered_toblerones_cells->[$j];
+         if ($intersection->size() == 4) {$edges += [$i,$j];}
+      }
+   }
+   for(my $i=0; $i<16; $i++){
+      if($redtoblerones->contains($ordered_toblerones_cells->[$i])){
+         $rednodes += $i;
+      } else {
+         $bluenodes += $i;
+      }
+   }
+   return ($edges, $rednodes, $bluenodes, $redsimplices, $bluesimplices);
+}
+
+my $P = scale(simplex(3),2);
+my $minkowski = minkowski_sum($P, $P);
+my $CP = cayley_polytope($P,$P);
+my $cayley_points = $CP->LATTICE_POINTS;
+my $points = $minkowski->LATTICE_POINTS;
+my $ptsindices = new Map<Vector<Integer>, Int>();
+for(my $i=0; $i<$points->rows(); $i++){
+   $ptsindices->{$points->row($i)} = $i;
+}
+
 
 my $id2edges = load("data/regular_unimodular.representative_graphs");
 my $cl2ids = load("data/regular_unimodular.cl2ids");
@@ -165,10 +247,18 @@ foreach my $cl (keys %$cl2ids){
       my $class_members_string = format_number($class_members);
       my $tikzfilename = $cl."_".$id."_graph.tikz";
       my $svgfilename = $cl."_".$id."_graph.svg";
-      my $edges = $id2edges->{$id};
       my $triang = $id2triang->{$id};
-      $triang = join(", ", map(simplex_to_string($_), @$triang));
-      graph_to_tikz("latex/graphs/$tikzfilename", $edges);
+      my ($edges, $rn, $bn, $rs, $bs) = tropical_curve_from_subdivision($cayley_points, $triang, $ptsindices);
+      $triang = join(", ", map{
+            my $result = simplex_to_string($_);
+         if($rs->contains($_)){
+            $result = "\\textcolor{red}{$result}";
+         } elsif($bs->contains($_)) {
+            $result = "\\textcolor{blue}{$result}";
+         }
+         $result;
+         }@$triang);
+      graph_to_tikz("latex/graphs/$tikzfilename", $edges, $rn, $bn);
       my $idstring = format_number($id);
       print $OUT "\\fbox{\n";
       print $OUT "\\begin{minipage}{.45\\textwidth}\n";
