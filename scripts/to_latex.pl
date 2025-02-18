@@ -119,25 +119,25 @@ sub graph_to_tikz {
 sub simplex_to_string {
    my($in) = @_;
    my %encoding = qw(0 A
-   1 B
-   2 C
-   3 D
-   4 E
-   5 F
-   6 G
-   7 H
-   8 I
-   9 J
-   10 K
-   11 L
-   12 M
-   13 N
-   14 O
-   15 P
-   16 Q
-   17 R
-   18 S
-   19 T);
+   1 a
+   2 B
+   3 b
+   4 C
+   5 c
+   6 D
+   7 d
+   8 E
+   9 e
+   10 F
+   11 f
+   12 G
+   13 g
+   14 H
+   15 h
+   16 I
+   17 i
+   18 J
+   19 j);
    my $result = join("", map($encoding{$_}, @$in));
    return $result;
 }
@@ -273,7 +273,7 @@ foreach my $cl (keys %$cl2ids){
       print $OUT "\\end{scaletikzpicturetowidth}\n";
       print $OUT "\\end{minipage}\n";
       print $OUT "\\end{tabular}\\\\[.3cm]\n";
-      print $OUT "Sample triangulation: \\tiny $triang \\normalsize \\\\\n";
+      print $OUT "\\tiny $triang \\normalsize \\\\\n";
       print $OUT "\\end{minipage}\n}\n\n";
       $counter++;
       # if($counter == 100){
