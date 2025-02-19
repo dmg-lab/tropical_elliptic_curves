@@ -273,7 +273,7 @@ foreach my $cl (keys %$cl2ids){
       print $OUT "\\end{scaletikzpicturetowidth}\n";
       print $OUT "\\end{minipage}\n";
       print $OUT "\\end{tabular}\\\\[.3cm]\n";
-      print $OUT "\\tiny $triang \\normalsize \\\\\n";
+      print $OUT "{\\tiny\\begin{spacing}{1.1}\n$triang\n\\end{spacing} }\n";
       print $OUT "\\end{minipage}\n}\n\n";
       $counter++;
       # if($counter == 100){
