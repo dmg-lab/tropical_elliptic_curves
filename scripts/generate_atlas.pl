@@ -263,17 +263,19 @@ foreach my $cl (keys %$cl2ids){
       print $OUT "\\fbox{\n";
       print $OUT "\\begin{minipage}{.45\\textwidth}\n";
       print $OUT "\\begin{tabular}{cc}\n";
-      print $OUT "\\begin{minipage}{.5\\textwidth}\n";
-      print $OUT "ID: $counter\\\\ CH: $idstring\\\\\n";
-      print $OUT "\\small Members in class:\\\\ $class_members_string\\normalsize\n";
+      print $OUT "\\begin{minipage}{.55\\textwidth}\n";
+      print $OUT "\\begin{minipage}{\\textwidth}\n";
+      print $OUT "ID: $counter\\\\\n";
+      print $OUT "\\small Members in class: $class_members_string\\normalsize\\\\\n";
+      print $OUT "\\end{minipage}\n";
+      print $OUT "{\\tiny\\begin{spacing}{1.1}\n$triang\n\\end{spacing} }\n";
       print $OUT "\\end{minipage} & \n";
-      print $OUT "\\begin{minipage}{.4\\textwidth}\n";
+      print $OUT "\\begin{minipage}{.35\\textwidth}\n";
       print $OUT "\\begin{scaletikzpicturetowidth}{\\textwidth}\n";
       print $OUT "\\input{graphs/$tikzfilename}\n";
       print $OUT "\\end{scaletikzpicturetowidth}\n";
       print $OUT "\\end{minipage}\n";
-      print $OUT "\\end{tabular}\\\\[.3cm]\n";
-      print $OUT "{\\tiny\\begin{spacing}{1.1}\n$triang\n\\end{spacing} }\n";
+      print $OUT "\\end{tabular}\n";
       print $OUT "\\end{minipage}\n}\n\n";
       $counter++;
       # if($counter == 100){
