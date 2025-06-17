@@ -3,6 +3,7 @@
 \usepackage{environ}
 \usepackage{adjustbox}
 \usepackage{setspace}
+\usepackage{csquotes}
 \makeatletter
 \newsavebox{\measure@tikzpicture}
 \NewEnviron{scaletikzpicturetowidth}[1]{%
@@ -21,60 +22,46 @@
 
 \begin{document}
 \maketitle
+This document contains additional data for the paper \emph{Tropical elliptic curves in 3-space} by L. Casabella, L. Kastner, and R. Vlad (arxiv link). 
 \tableofcontents
 \section{Documentation}
 \subsection{Point configuration}
-The point configuration we are working with is given as the rows of the following matrix:
+We are working with the lattice points of the Cayley polytope $C(2\Delta_3,2\Delta_3)$, which are given by the rows of the following matrix:
 \[
    \begin{array}{c|ccccc}
-      \textbf{A} & 1 & 0 & 0 & 0 & 0\\
-      \textbf{a} & 1 & 0 & 0 & 0 & 1\\
-      \textbf{B} & 1 & 0 & 0 & 1 & 0\\
-      \textbf{b} & 1 & 0 & 0 & 1 & 1\\
-      \textbf{C} & 1 & 0 & 0 & 2 & 0\\
-      \textbf{c} & 1 & 0 & 0 & 2 & 1\\
-      \textbf{D} & 1 & 0 & 1 & 0 & 0\\
-      \textbf{d} & 1 & 0 & 1 & 0 & 1\\
-      \textbf{E} & 1 & 0 & 1 & 1 & 0\\
-      \textbf{e} & 1 & 0 & 1 & 1 & 1\\
-      \textbf{F} & 1 & 0 & 2 & 0 & 0\\
-      \textbf{f} & 1 & 0 & 2 & 0 & 1\\
-      \textbf{G} & 1 & 1 & 0 & 0 & 0\\
-      \textbf{g} & 1 & 1 & 0 & 0 & 1\\
-      \textbf{H} & 1 & 1 & 0 & 1 & 0\\
-      \textbf{h} & 1 & 1 & 0 & 1 & 1\\
-      \textbf{I} & 1 & 1 & 1 & 0 & 0\\
-      \textbf{i} & 1 & 1 & 1 & 0 & 1\\
-      \textbf{J} & 1 & 2 & 0 & 0 & 0\\
-      \textbf{j} & 1 & 2 & 0 & 0 & 1
+      \textbf{A} & 1 & 0 & 0 & 0 & 0 \\
+      \textbf{a} & 0 & 1 & 0 & 0 & 0 \\
+      \textbf{B} & 1 & 0 & 0 & 0 & 1 \\
+      \textbf{b} & 0 & 1 & 0 & 0 & 1 \\
+      \textbf{C} & 1 & 0 & 0 & 0 & 2 \\
+      \textbf{c} & 0 & 1 & 0 & 0 & 2 \\
+      \textbf{D} & 1 & 0 & 0 & 1 & 0 \\
+      \textbf{d} & 0 & 1& 0 & 1 & 0 \\
+      \textbf{E} & 1 & 0 & 0 & 1 & 1 \\
+      \textbf{e} & 0 & 1 & 0 & 1 & 1 \\
+      \textbf{F} & 1 & 0 & 0 & 2 & 0 \\
+      \textbf{f} & 0 & 1 & 0 & 2 & 0 \\
+      \textbf{G} & 1 & 0& 1 & 0 & 0 \\
+      \textbf{g} & 0 & 1 & 1 & 0 & 0 \\
+      \textbf{H} & 1 & 0 & 1 & 0 & 1 \\
+      \textbf{h} & 0 & 1 & 1 & 0 & 1 \\
+      \textbf{I} & 1 & 0 & 1 & 1 & 0 \\
+      \textbf{i} & 0 & 1 & 1 & 1 & 0 \\
+      \textbf{J} & 1 & 0 & 2 & 0 & 0 \\
+      \textbf{j} & 0 & 1 & 2 & 0 & 0
    \end{array}
 \]
-The rows are labelled in the first column with $A-T$. We will use these
-labels later to present the simplices of triangulations in a compact format. For
-example the string
-\[
-GJKLR\ =\ [6,9,10,11,17]
-\]
-encodes the simplex that is the convex hull of the corresponding rows in the
-matrix.
-
-The rows of this matrix are the lattice points of the Cayley polytope
-$C(2\Delta_3, 2\Delta_3)$, except it was necessary to project this down to
-arrive at something full-dimensional for \texttt{mptopcom} to work.
+We will use these labels $A,\dots, J$ and $a,\dots, j$
+to write triangulations of $C(2\Delta_3,2\Delta_3)$ in compact format. 
 
 \subsection{ID}
-The ID's of the graphs are just a continuous numbering of these for easier
-reference.
+ The ID of a graph runs from $0$ to 4,008 and records its place in our list.
 
-\subsection{Canonical Hash (CH)}
-In \texttt{polymake} one can compute the \texttt{canonical\_hash} of a graph,
-which in the background is computed by either \texttt{nauty} or \texttt{bliss}.
-Essentially two graphs with different hash are never isomorphic, and except for
-pathological cases two graphs with the same hash will be isomorphic. In the
-case of the graphs in this document the canonical hash is unique.
+\subsection{Members in class}
+The number of \enquote{members in class} records how many unimodular triangulations of the Cayley polytope $C(2\Delta_3, 2\Delta_3)$ give rise to a tropical elliptic curve in that given graph isomorphism class.
 
 \subsection{Triangulation}
-For every graph we also recorded a triangulation giving rise to this graph.
+For every graph, we record one unimodular triangulation of $C(2\Delta_3, 2\Delta_3)$ inducing it. 
 
 \section{Graph classification}
 \setlength{\parindent}{0pt}
