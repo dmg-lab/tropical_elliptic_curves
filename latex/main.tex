@@ -7,64 +7,65 @@
 \makeatletter
 \newsavebox{\measure@tikzpicture}
 \NewEnviron{scaletikzpicturetowidth}[1]{%
-  \def\tikz@width{#1}%
-  \def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
-  \BODY
-  \end{lrbox}%
-  \pgfmathparse{#1/\wd\measure@tikzpicture}%
-  \edef\tikzscale{\pgfmathresult}%
-  \BODY
+	\def\tikz@width{#1}%
+	\def\tikzscale{1}\begin{lrbox}{\measure@tikzpicture}%
+		\BODY
+	\end{lrbox}%
+	\pgfmathparse{#1/\wd\measure@tikzpicture}%
+	\edef\tikzscale{\pgfmathresult}%
+	\BODY
 }
 \makeatother
 
+\date{}
 \title{Atlas of tropical elliptic curves}
-\author{Laura Casabella\\Lars Kastner\\Raluca Vlad}
+\author{Laura Casabella, Lars Kastner, and Raluca Vlad}
 
 \begin{document}
-\maketitle
-This document contains additional data for the paper \emph{Tropical elliptic curves in 3-space} by L. Casabella, L. Kastner, and R. Vlad (arxiv link). 
-\tableofcontents
-\section{Documentation}
-\subsection{Point configuration}
-We are working with the lattice points of the Cayley polytope $C(2\Delta_3,2\Delta_3)$, which are given by the rows of the following matrix:
-\[
-   \begin{array}{c|ccccc}
-      \textbf{A} & 1 & 0 & 0 & 0 & 0 \\
-      \textbf{a} & 0 & 1 & 0 & 0 & 0 \\
-      \textbf{B} & 1 & 0 & 0 & 0 & 1 \\
-      \textbf{b} & 0 & 1 & 0 & 0 & 1 \\
-      \textbf{C} & 1 & 0 & 0 & 0 & 2 \\
-      \textbf{c} & 0 & 1 & 0 & 0 & 2 \\
-      \textbf{D} & 1 & 0 & 0 & 1 & 0 \\
-      \textbf{d} & 0 & 1& 0 & 1 & 0 \\
-      \textbf{E} & 1 & 0 & 0 & 1 & 1 \\
-      \textbf{e} & 0 & 1 & 0 & 1 & 1 \\
-      \textbf{F} & 1 & 0 & 0 & 2 & 0 \\
-      \textbf{f} & 0 & 1 & 0 & 2 & 0 \\
-      \textbf{G} & 1 & 0& 1 & 0 & 0 \\
-      \textbf{g} & 0 & 1 & 1 & 0 & 0 \\
-      \textbf{H} & 1 & 0 & 1 & 0 & 1 \\
-      \textbf{h} & 0 & 1 & 1 & 0 & 1 \\
-      \textbf{I} & 1 & 0 & 1 & 1 & 0 \\
-      \textbf{i} & 0 & 1 & 1 & 1 & 0 \\
-      \textbf{J} & 1 & 0 & 2 & 0 & 0 \\
-      \textbf{j} & 0 & 1 & 2 & 0 & 0
-   \end{array}
-\]
-We will use these labels $A,\dots, J$ and $a,\dots, j$
-to write triangulations of $C(2\Delta_3,2\Delta_3)$ in compact format. 
-
-\subsection{ID}
- The ID of a graph runs from $0$ to 4,008 and records its place in our list.
-
-\subsection{Members in class}
-The number of \enquote{members in class} records how many unimodular triangulations of the Cayley polytope $C(2\Delta_3, 2\Delta_3)$ give rise to a tropical elliptic curve in that given graph isomorphism class.
-
-\subsection{Triangulation}
-For every graph, we record one unimodular triangulation of $C(2\Delta_3, 2\Delta_3)$ inducing it. 
-
-\section{Graph classification}
-\setlength{\parindent}{0pt}
-\input{inner.tex}
-
+	\maketitle
+	This document contains additional data for the paper \emph{Tropical elliptic curves in 3-space} by L. Casabella, L. Kastner, and R. Vlad (\texttt{arXiv link}). 
+	\tableofcontents
+	\section{Documentation}
+	\subsection{Point configuration}
+	We are working with the lattice points of the Cayley polytope $C(2\Delta_3,2\Delta_3)$, which are given by the rows of the following matrix: \newline
+	\[
+	\begin{array}{c|ccccc}
+		\textbf{A} & 1 & 0 & 0 & 0 & 0 \\
+		\textbf{a} & 0 & 1 & 0 & 0 & 0 \\
+		\textbf{B} & 1 & 0 & 0 & 0 & 1 \\
+		\textbf{b} & 0 & 1 & 0 & 0 & 1 \\
+		\textbf{C} & 1 & 0 & 0 & 0 & 2 \\
+		\textbf{c} & 0 & 1 & 0 & 0 & 2 \\
+		\textbf{D} & 1 & 0 & 0 & 1 & 0 \\
+		\textbf{d} & 0 & 1& 0 & 1 & 0 \\
+		\textbf{E} & 1 & 0 & 0 & 1 & 1 \\
+		\textbf{e} & 0 & 1 & 0 & 1 & 1 \\
+		\textbf{F} & 1 & 0 & 0 & 2 & 0 \\
+		\textbf{f} & 0 & 1 & 0 & 2 & 0 \\
+		\textbf{G} & 1 & 0& 1 & 0 & 0 \\
+		\textbf{g} & 0 & 1 & 1 & 0 & 0 \\
+		\textbf{H} & 1 & 0 & 1 & 0 & 1 \\
+		\textbf{h} & 0 & 1 & 1 & 0 & 1 \\
+		\textbf{I} & 1 & 0 & 1 & 1 & 0 \\
+		\textbf{i} & 0 & 1 & 1 & 1 & 0 \\
+		\textbf{J} & 1 & 0 & 2 & 0 & 0 \\
+		\textbf{j} & 0 & 1 & 2 & 0 & 0
+	\end{array}
+	\]
+	We will use the labels $A,\dots, J$ and $a,\dots, j$
+	to write triangulations of $C(2\Delta_3,2\Delta_3)$ in compact format. 
+	
+	\subsection{ID}
+	The ID of a graph runs from $0$ to 4,008 and records its place in our list.
+	
+	\subsection{Members in class}
+	The number of \enquote{members in class} records how many unimodular triangulations of the Cayley polytope $C(2\Delta_3, 2\Delta_3)$ give rise to a tropical elliptic curve in that given graph isomorphism class.
+	
+	\subsection{Triangulation}
+	For every graph, we record one unimodular triangulation of $C(2\Delta_3, 2\Delta_3)$ inducing it. 
+	
+	\section{Graph classification}
+	\setlength{\parindent}{0pt}
+	\input{inner.tex}
+	
 \end{document}
